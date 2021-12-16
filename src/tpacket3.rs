@@ -105,7 +105,6 @@ impl Default for TpacketReq3 {
     }
 }
 
-#[inline]
 named!(
     pub get_tpacket_block_desc<TpacketBlockDesc>,
     do_parse!(
@@ -118,7 +117,6 @@ named!(
     )
 );
 
-#[inline]
 named!(
     get_tpacket_bd_header<TpacketBDHeader>,
     do_parse!(
@@ -141,13 +139,11 @@ named!(
     )
 );
 
-#[inline]
 named!(
     get_tpacket_bdts<TpacketBDTS>,
     do_parse!(ts_sec: le_u32 >> ts_nsec: le_u32 >> (TpacketBDTS { ts_sec, ts_nsec }))
 );
 
-#[inline]
 named!(
     get_tpacket_hdr_variant1<TpacketHdrVariant1>,
     do_parse!(
@@ -164,7 +160,6 @@ named!(
     )
 );
 
-#[inline]
 named!(
     pub get_tpacket3_hdr<Tpacket3Hdr>,
     do_parse!(

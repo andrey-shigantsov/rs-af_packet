@@ -1,4 +1,4 @@
-use socket::{self, Socket};
+use crate::socket::{self, Socket};
 use std::{io, mem};
 
 use libc::{c_void, sendto, sockaddr, sockaddr_ll, AF_PACKET, ETH_ALEN};

@@ -8,9 +8,9 @@ use libc::{
     PROT_WRITE,
 };
 
-use socket::{self, Socket, IFF_PROMISC};
+use crate::socket::{self, Socket, IFF_PROMISC};
 
-use tpacket3;
+use crate::tpacket3;
 
 //Used digits for these consts, if they were defined differently in C headers I have added that definition in the comments beside them
 

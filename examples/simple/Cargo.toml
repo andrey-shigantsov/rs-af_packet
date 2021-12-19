@@ -7,3 +7,7 @@ authors = ["Nick Price <nick@spun.io>"]
 [dependencies]
 af_packet = { path = "../../" }
 num_cpus = "*"
+tokio = { version = "1.15", features = ["rt", "rt-multi-thread"], optional = true }
+
+[features]
+async-tokio = ["af_packet/async-tokio", "tokio"]

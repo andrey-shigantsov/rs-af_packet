@@ -1,5 +1,9 @@
 use crate::socket::{self, Socket};
-use std::{io, mem};
+use std::os::unix::io::{AsRawFd, RawFd};
+use std::{
+    io::{Error, Result},
+    mem,
+};
 
 use libc::{c_void, sendto, sockaddr, sockaddr_ll, AF_PACKET, ETH_ALEN};
 
@@ -9,13 +13,13 @@ pub struct Player {
 
 impl Player {
     ///gets a socket ready to play frames
-    pub fn open_socket(if_name: &str) -> io::Result<Player> {
+    pub fn open_socket(if_name: &str) -> Result<Player> {
         let sock = Socket::from_if_name(if_name, socket::AF_PACKET)?;
         Ok(Player { sock })
     }
 
     ///sends a raw, whole ethernet frame on the socket
-    pub fn send_frame(&self, mut frame: &mut [u8]) -> io::Result<()> {
+    pub fn send_frame(&self, mut frame: &mut [u8]) -> Result<()> {
         let mut sa = sockaddr_ll {
             sll_family: AF_PACKET as u16,
             sll_protocol: 0,
@@ -44,6 +48,12 @@ impl Player {
         if b >= 0 {
             return Ok(());
         }
-        Err(io::Error::last_os_error())
+        Err(Error::last_os_error())
+    }
+}
+
+impl AsRawFd for Player {
+    fn as_raw_fd(&self) -> RawFd {
+        self.sock.as_raw_fd()
     }
 }

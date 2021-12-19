@@ -1,6 +1,4 @@
 extern crate libc;
-#[macro_use]
-extern crate nom;
 
 pub mod rx;
 pub mod socket;

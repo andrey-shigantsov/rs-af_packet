@@ -1,8 +1,8 @@
 [package]
 edition = "2018"
 name = "af_packet"
-version = "0.3.1"
-authors = ["Nick Price <nick@spun.io>"]
+version = "0.4.0"
+authors = ["Nick Price <nick@spun.io>", "Andrey Shigantsov <shigantsov.a.a@gmail.com>"]
 description = "AF_PACKET bindings for Rust, primarily to be used for high-performance network security applications."
 license = "GPL-3.0"
 repository = "https://github.com/DominoTree/rs-af_packet"
@@ -11,4 +11,9 @@ categories = ["os", "os::unix-apis", "network-programming", "development-tools::
 
 [dependencies]
 libc = "0.2"
-nom = "5.1"
+
+futures-lite = { version = "1.12", optional = true }
+tokio = { version = "1.15", features = ["net"], optional = true }
+
+[features]
+async-tokio = ["futures-lite", "tokio"]

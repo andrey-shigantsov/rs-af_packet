@@ -27,10 +27,10 @@ fn main() {
     //spawn one thread per CPU
     for _ in 0..num_cpus::get() {
         let interface = args[1].clone();
-        
+
         //open an mmap()ed ring buffer for this thread
-        let mut ring = af_packet::Ring::from_if_name(&interface).unwrap();
-        
+        let mut ring = af_packet::rx::Ring::from_if_name(&interface).unwrap();             
+
         //store the fd from the ring to get stats later
         fds.push(ring.fd);
         
@@ -38,11 +38,13 @@ fn main() {
             //move struct into the thread
             //receive blocks and process them
             loop {
-                let mut block = ring.get_block();
-                for _packet in block.get_raw_packets() {
-                    //process frame data here
-                }
-                block.mark_as_consumed();
+                let block = ring.recv_block(); //THIS WILL BLOCK
+                for res in block.into_raw_packets_iter() {
+                    let _payload = pack.payload();
+
+                    //do something
+
+                } // the current block is marked as consumed during a iterator drop
             }
         });
     }

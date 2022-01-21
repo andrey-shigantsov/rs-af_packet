@@ -528,6 +528,11 @@ pub struct RawPacket<'a> {
     payload: Pin<&'a [u8]>,
 }
 impl<'a> RawPacket<'a> {
+    pub fn timestamp(&self) -> std::time::SystemTime {
+        use std::time::{Duration, SystemTime};
+        SystemTime::UNIX_EPOCH
+            + Duration::new(self.header.tp_sec.into(), self.header.tp_nsec)
+    }
     pub fn header(&self) -> &'a tpacket3::Tpacket3Hdr {
         unsafe { self.header.map_unchecked(|hdr| hdr).get_ref() }
     }

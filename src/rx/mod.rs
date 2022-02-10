@@ -252,6 +252,13 @@ impl Ring {
         self.socket.clone()
     }
 
+    ///Drain all received blocks
+    pub fn drain(&mut self) {
+        while let Some(block) = self.check_current_block() {
+            block.consume();
+        }
+    }
+
     ///Waits for a block to be added to the ring buffer and returns it
     #[inline]
     pub fn recv_block<'a>(&mut self) -> Block<'a> {
@@ -348,13 +355,18 @@ impl RawBlock {
     }
 
     #[inline]
-    pub(crate) fn _desc_mut(&mut self) -> &mut tpacket3::TpacketBlockDesc {
+    pub(crate) fn desc_mut(&mut self) -> &mut tpacket3::TpacketBlockDesc {
         unsafe { self.desc.as_mut().unwrap() }
     }
 
     #[inline]
     pub(crate) fn is_ready(&self) -> bool {
         (self.desc().hdr.block_status & tpacket3::TP_STATUS_USER) != 0
+    }
+
+    #[inline]
+    pub(crate) fn consume(&mut self) {
+        self.desc_mut().hdr.block_status = tpacket3::TP_STATUS_KERNEL;
     }
 }
 
@@ -530,8 +542,7 @@ pub struct RawPacket<'a> {
 impl<'a> RawPacket<'a> {
     pub fn timestamp(&self) -> std::time::SystemTime {
         use std::time::{Duration, SystemTime};
-        SystemTime::UNIX_EPOCH
-            + Duration::new(self.header.tp_sec.into(), self.header.tp_nsec)
+        SystemTime::UNIX_EPOCH + Duration::new(self.header.tp_sec.into(), self.header.tp_nsec)
     }
     pub fn header(&self) -> &'a tpacket3::Tpacket3Hdr {
         unsafe { self.header.map_unchecked(|hdr| hdr).get_ref() }

@@ -43,6 +43,11 @@ impl AsyncRing {
         self.inner.socket()
     }
 
+    ///Drain all received blocks
+    pub fn drain(&mut self) {
+        self.inner.drain()
+    }
+
     ///Waits for a block to be added to the ring buffer and returns it
     pub async fn recv_block(&mut self) -> Result<Block<'_>> {
         loop {
